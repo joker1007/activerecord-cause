@@ -30,7 +30,7 @@ Or install it yourself as:
 ```ruby
 ActiveRecord::Cause.match_paths = [
   /spec\/spec_helper/,
-]
+] # default is []
 ActiveRecord::Cause.log_with_sql = true # default is false
 ```
 ```ruby
@@ -42,6 +42,7 @@ User.all
 # D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   User Load (ActiveRecord::Cause)  SELECT "users".* FROM "users" caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
 ```
 
+on Rails, `Activerecord::Cause.match_paths` has default `[/#{Rails.root.join("app").to_s}/]`
 
 ## Development
 
