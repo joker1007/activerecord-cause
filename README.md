@@ -1,8 +1,13 @@
 # Activerecord::Cause
+[![Build Status](https://travis-ci.org/joker1007/activerecord-cause.svg?branch=master)](https://travis-ci.org/joker1007/activerecord-cause)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/activerecord/cause`. To experiment with that code, run `bin/console` for an interactive prompt.
+This gem logs where ActiveRecord actually loads record
 
-TODO: Delete this and the text above, and describe your gem
+ex.
+```
+D, [2015-04-15T22:13:46.928908 #66812] DEBUG -- :   User Load (0.1ms)  SELECT "users".* FROM "users"
+D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   ActiveRecord::Cause  SELECT "users".* FROM "users" caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
+```
 
 ## Installation
 
@@ -22,7 +27,20 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+ActiveRecord::Cause.match_paths = [
+  /spec\/spec_helper/,
+]
+```
+```ruby
+# spec/spec_helper.rb
+User.all
+
+# output to log file.
+# D, [2015-04-15T22:13:46.928908 #66812] DEBUG -- :   User Load (0.1ms)  SELECT "users".* FROM "users"
+# D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   ActiveRecord::Cause  SELECT "users".* FROM "users" caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
+```
+
 
 ## Development
 
@@ -32,7 +50,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/activerecord-cause/fork )
+1. Fork it ( https://github.com/joker1007/activerecord-cause/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

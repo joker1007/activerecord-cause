@@ -1,6 +1,5 @@
 language: ruby
 sudo: false
-before_script: "gem update bundler"
 rvm:
   - 2.2.1
   - 2.1
