@@ -1,5 +1,6 @@
 # Activerecord::Cause
 [![Build Status](https://travis-ci.org/joker1007/activerecord-cause.svg?branch=master)](https://travis-ci.org/joker1007/activerecord-cause)
+[![Gem Version](https://badge.fury.io/rb/activerecord-cause.svg)](http://badge.fury.io/rb/activerecord-cause)
 
 This gem logs where ActiveRecord actually loads record
 
