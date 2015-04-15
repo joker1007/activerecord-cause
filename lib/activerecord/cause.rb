@@ -10,6 +10,10 @@ module ActiveRecord
       []
     end
 
+    config_accessor :log_with_sql, instance_accessor: false do
+      false
+    end
+
     class LogSubscriber < ActiveSupport::LogSubscriber
       IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"]
 
@@ -34,7 +38,7 @@ module ActiveRecord
 
         return unless loc
 
-        name  = "ActiveRecord::Cause"
+        name  = "#{payload[:name]} (ActiveRecord::Cause)"
         sql   = payload[:sql]
         binds = nil
 
@@ -52,7 +56,14 @@ module ActiveRecord
         end
         cause = color(loc.to_s, nil, true)
 
-        debug "  #{name}  #{sql}#{binds} caused by #{cause}"
+        output =
+          if ActiveRecord::Cause.log_with_sql
+            "  #{name}  #{sql}#{binds} caused by #{cause}"
+          else
+            "  #{name}  caused by #{cause}"
+          end
+
+        debug(output)
       end
 
       def odd?
@@ -65,6 +76,8 @@ module ActiveRecord
     end
   end
 end
+
+require "activerecord/cause/railtie" if defined?(Rails)
 
 ActiveSupport.on_load(:active_record) do
   ActiveRecord::Cause::LogSubscriber.attach_to :active_record

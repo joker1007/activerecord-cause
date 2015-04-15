@@ -6,7 +6,7 @@ This gem logs where ActiveRecord actually loads record
 ex.
 ```
 D, [2015-04-15T22:13:46.928908 #66812] DEBUG -- :   User Load (0.1ms)  SELECT "users".* FROM "users"
-D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   ActiveRecord::Cause  SELECT "users".* FROM "users" caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
+D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   User Load (ActiveRecord::Cause)  caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
 ```
 
 ## Installation
@@ -31,6 +31,7 @@ Or install it yourself as:
 ActiveRecord::Cause.match_paths = [
   /spec\/spec_helper/,
 ]
+ActiveRecord::Cause.log_with_sql = true # default is false
 ```
 ```ruby
 # spec/spec_helper.rb
@@ -38,7 +39,7 @@ User.all
 
 # output to log file.
 # D, [2015-04-15T22:13:46.928908 #66812] DEBUG -- :   User Load (0.1ms)  SELECT "users".* FROM "users"
-# D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   ActiveRecord::Cause  SELECT "users".* FROM "users" caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
+# D, [2015-04-15T22:13:46.929038 #66812] DEBUG -- :   User Load (ActiveRecord::Cause)  SELECT "users".* FROM "users" caused by /Users/joker/srcs/activerecord-cause/spec/activerecord/cause_spec.rb:16:in `block (3 levels) in <top (required)>'
 ```
 
 
