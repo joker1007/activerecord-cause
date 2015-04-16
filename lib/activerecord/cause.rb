@@ -1,4 +1,5 @@
 require "active_record"
+require "active_record/log_subscriber"
 
 require "activerecord/cause/version"
 
@@ -14,13 +15,8 @@ module ActiveRecord
       false
     end
 
-    class LogSubscriber < ActiveSupport::LogSubscriber
+    class LogSubscriber < ActiveRecord::LogSubscriber
       IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"]
-
-      def initialize
-        super
-        @odd = false
-      end
 
       def sql(event)
         return if ActiveRecord::Cause.match_paths.empty?
@@ -42,10 +38,12 @@ module ActiveRecord
         sql   = payload[:sql]
         binds = nil
 
-        unless (payload[:binds] || []).empty?
-          binds = "  " + payload[:binds].map { |col,v|
-            render_bind(col, v)
-          }.inspect
+        if respond_to?(:render_bind)
+          unless (payload[:binds] || []).empty?
+            binds = "  " + payload[:binds].map { |col,v|
+              render_bind(col, v)
+            }.inspect
+          end
         end
 
         if odd?
@@ -64,14 +62,6 @@ module ActiveRecord
           end
 
         debug(output)
-      end
-
-      def odd?
-        @odd = !@odd
-      end
-
-      def logger
-        ActiveRecord::Base.logger
       end
     end
   end

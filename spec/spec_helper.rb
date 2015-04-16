@@ -6,7 +6,15 @@ ActiveRecord::Base.establish_connection(
   database: ":memory:"
 )
 
-class User < ActiveRecord::Base; end
+class AuthUser < ActiveRecord::Base; end
+
+class User < ActiveRecord::Base
+  belongs_to :auth_user, polymorphic: true
+
+  def auth_user_name
+    auth_user.name
+  end
+end
 
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Migrator.migrate File.expand_path("../db/migrate", __FILE__), nil

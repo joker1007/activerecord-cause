@@ -1,6 +1,6 @@
-class CreateUsers < ActiveRecord::Migration
+class CreateAuthUsers < ActiveRecord::Migration
   def change
-    create_table :users do |t|
+    create_table :auth_users do |t|
       t.string :name
 
       t.timestamps null: false

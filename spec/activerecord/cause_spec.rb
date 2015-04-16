@@ -14,7 +14,9 @@ describe ActiveRecord::Cause do
 
     it 'Log SQL with location that is cause of load' do
       User.all.to_a
-      expect(stringio.tap(&:rewind).read).to match(/#{File.expand_path(__FILE__)}/)
+      output = stringio.tap(&:rewind).read
+      puts output
+      expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
   end
 
@@ -23,9 +25,26 @@ describe ActiveRecord::Cause do
       ActiveRecord::Cause.match_paths = [/hogehoge/]
     end
 
-    it 'Log SQL with location that is cause of load' do
+    it 'Not log SQL with location that is cause of load' do
       User.all.to_a
-      expect(stringio.tap(&:rewind).read).not_to match(/#{File.expand_path(__FILE__)}/)
+      output = stringio.tap(&:rewind).read
+      puts output
+      expect(output).not_to match(/#{File.expand_path(__FILE__)}/)
+    end
+  end
+
+  context "Use polymorphic association" do
+    before do
+      ActiveRecord::Cause.match_paths = [/_spec/]
+    end
+
+    it 'Log SQL with location that is cause of load' do
+      auth_user = AuthUser.create!(name: "twitter")
+      User.create!(name: "joker1007", auth_user: auth_user)
+      User.first.auth_user_name
+      output = stringio.tap(&:rewind).read
+      puts output
+      expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
   end
 end
