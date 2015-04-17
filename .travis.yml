@@ -7,3 +7,4 @@ gemfile:
   - gemfiles/activerecord-32.gemfile
   - gemfiles/activerecord-40.gemfile
   - gemfiles/activerecord-41.gemfile
+  - gemfiles/activerecord-42.gemfile
