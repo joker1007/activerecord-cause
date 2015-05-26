@@ -33,7 +33,11 @@ ActiveRecord::Cause.match_paths = [
   /spec\/spec_helper/,
 ] # default is []
 ActiveRecord::Cause.log_with_sql = true # default is false
+ActiveRecord::Cause.log_mode = :all # default is :single
 ```
+
+If `log_mode` is `:all`, outputs all matched locations;
+
 ```ruby
 # spec/spec_helper.rb
 User.all
