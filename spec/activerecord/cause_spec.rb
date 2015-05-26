@@ -47,4 +47,21 @@ describe ActiveRecord::Cause do
       expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
   end
+
+  context "log_mode :all" do
+    around do |ex|
+      ActiveRecord::Cause.match_paths = [/spec/]
+      ActiveRecord::Cause.log_mode = :all
+      ex.run
+      ActiveRecord::Cause.log_mode = :single
+    end
+
+    it 'Log SQL with location that is cause of load' do
+      User.all.to_a
+      output = stringio.tap(&:rewind).read
+      puts output
+      expect(output).to match(/rspec-core/)
+      expect(output).to match(/#{File.expand_path(__FILE__)}/)
+    end
+  end
 end
