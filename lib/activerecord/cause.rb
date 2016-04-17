@@ -24,6 +24,14 @@ module ActiveRecord
       IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"]
 
       def sql(event)
+        if ActiveRecord.version >= Gem::Version.new("5.0.0.beta")
+          sql_for_ar5(event)
+        else
+          sql_for_ar4(event)
+        end
+      end
+
+      def sql_for_ar4(event)
         return if ActiveRecord::Cause.match_paths.empty?
         return unless logger.debug?
 
@@ -48,12 +56,10 @@ module ActiveRecord
           sql   = payload[:sql]
           binds = nil
 
-          if respond_to?(:render_bind)
-            unless (payload[:binds] || []).empty?
-              binds = "  " + payload[:binds].map { |col,v|
-                render_bind(col, v)
-              }.inspect
-            end
+          unless (payload[:binds] || []).empty?
+            binds = "  " + payload[:binds].map { |col,v|
+              render_bind(col, v)
+            }.inspect
           end
 
           if odd?
@@ -72,6 +78,57 @@ module ActiveRecord
             end
 
           debug(output)
+        end
+      end
+
+      private
+
+      def sql_for_ar5(event)
+        return unless logger.debug?
+
+        payload = event.payload
+
+        return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
+
+        locations = get_locations
+        return if locations.empty?
+
+        if ActiveRecord::Cause.log_mode != :all
+          locations = locations.take(1)
+        end
+
+        locations.each do |loc|
+          name  = "#{payload[:name]} (ActiveRecord::Cause)"
+          sql   = payload[:sql]
+          binds = nil
+
+          unless (payload[:binds] || []).empty?
+            binds = "  " + payload[:binds].map { |attr| render_bind(attr) }.inspect
+          end
+
+          name = colorize_payload_name(name, payload[:name])
+          sql  = color(sql, sql_color(sql), true)
+          cause = color(loc.to_s, nil, true)
+
+          output =
+            if ActiveRecord::Cause.log_with_sql
+              "  #{name}  #{sql}#{binds} caused by #{cause}"
+            else
+              "  #{name}  caused by #{cause}"
+            end
+
+          debug(output)
+        end
+      end
+
+      private
+
+      def get_locations
+        return [] if ActiveRecord::Cause.match_paths.empty?
+        caller_locations.select do |l|
+          ActiveRecord::Cause.match_paths.any? do |re|
+            re.match(l.absolute_path)
+          end
         end
       end
     end

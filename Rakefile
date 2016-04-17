@@ -7,8 +7,10 @@ task :default => :spec
 
 pwd = File.expand_path('../', __FILE__)
 
+gemfiles = %w(activerecord-40 activerecord-41 activerecord-42 activerecord-50)
+
 namespace :spec do
-  %w(activerecord-40 activerecord-41 activerecord-42 activerecord-50).each do |gemfile|
+  gemfiles.each do |gemfile|
     desc "Run Tests by #{gemfile}.gemfile"
     task gemfile do
       Bundler.with_clean_env do
@@ -20,8 +22,26 @@ namespace :spec do
 
   desc "Run All Tests"
   task :all do
-    %w(activerecord-40 activerecord-41 activerecord-42 activerecord-50).each do |gemfile|
+    gemfiles.each do |gemfile|
       Rake::Task["spec:#{gemfile}"].invoke
+    end
+  end
+end
+
+namespace :bundle_update do
+  gemfiles.each do |gemfile|
+    desc "Run Tests by #{gemfile}.gemfile"
+    task gemfile do
+      Bundler.with_clean_env do
+        sh "BUNDLE_GEMFILE='#{pwd}/gemfiles/#{gemfile}.gemfile' bundle update"
+      end
+    end
+  end
+
+  desc "Run All Tests"
+  task :all do
+    gemfiles.each do |gemfile|
+      Rake::Task["bundle_update:#{gemfile}"].invoke
     end
   end
 end
