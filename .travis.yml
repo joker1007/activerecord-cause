@@ -1,10 +1,10 @@
 language: ruby
 sudo: false
 rvm:
-  - 2.2.1
-  - 2.1
+  - 2.3.0
+  - 2.2.4
 gemfile:
-  - gemfiles/activerecord-32.gemfile
   - gemfiles/activerecord-40.gemfile
   - gemfiles/activerecord-41.gemfile
   - gemfiles/activerecord-42.gemfile
+  - gemfiles/activerecord-50.gemfile
