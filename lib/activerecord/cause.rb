@@ -24,6 +24,12 @@ module ActiveRecord
       IGNORE_PAYLOAD_NAMES = ["SCHEMA", "EXPLAIN"]
 
       def sql(event)
+        return unless logger.debug?
+
+        payload = event.payload
+
+        return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
+
         if ActiveRecord.version >= Gem::Version.new("5.0.0.beta")
           sql_for_ar5(event)
         else
@@ -31,14 +37,10 @@ module ActiveRecord
         end
       end
 
+      private
+
       def sql_for_ar4(event)
-        return if ActiveRecord::Cause.match_paths.empty?
-        return unless logger.debug?
-
         payload = event.payload
-
-        return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
-
         locations = caller_locations.select do |l|
           ActiveRecord::Cause.match_paths.any? do |re|
             re.match(l.absolute_path)
@@ -81,15 +83,8 @@ module ActiveRecord
         end
       end
 
-      private
-
       def sql_for_ar5(event)
-        return unless logger.debug?
-
         payload = event.payload
-
-        return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
-
         locations = get_locations
         return if locations.empty?
 
@@ -120,8 +115,6 @@ module ActiveRecord
           debug(output)
         end
       end
-
-      private
 
       def get_locations
         return [] if ActiveRecord::Cause.match_paths.empty?
