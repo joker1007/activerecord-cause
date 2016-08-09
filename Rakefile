@@ -7,7 +7,7 @@ task :default => :spec
 
 pwd = File.expand_path('../', __FILE__)
 
-gemfiles = %w(activerecord-40 activerecord-41 activerecord-42 activerecord-50)
+gemfiles = %w(activerecord-41 activerecord-42 activerecord-50)
 
 namespace :spec do
   gemfiles.each do |gemfile|
