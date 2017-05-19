@@ -98,7 +98,11 @@ module ActiveRecord
           binds = nil
 
           unless (payload[:binds] || []).empty?
-            binds = "  " + payload[:binds].map { |attr| render_bind(attr) }.inspect
+            binds = if ActiveRecord.version >= Gem::Version.new("5.0.3")
+                      "  " + payload[:binds].zip(payload[:type_casted_binds]).map { |attr, value| render_bind(attr, value) }.inspect
+                    else
+                      "  " + payload[:binds].map { |attr| render_bind(attr) }.inspect
+                    end
           end
 
           name = colorize_payload_name(name, payload[:name])
