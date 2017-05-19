@@ -7,7 +7,7 @@ task :default => :spec
 
 pwd = File.expand_path('../', __FILE__)
 
-gemfiles = %w(activerecord-41 activerecord-42 activerecord-502 activerecord-50)
+gemfiles = Dir.glob(File.join(pwd, "gemfiles", "*.gemfile")).map { |f| File.basename(f, ".*") }
 
 namespace :spec do
   gemfiles.each do |gemfile|
