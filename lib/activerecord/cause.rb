@@ -99,7 +99,8 @@ module ActiveRecord
 
           unless (payload[:binds] || []).empty?
             binds = if ActiveRecord.version >= Gem::Version.new("5.0.3")
-                      "  " + payload[:binds].zip(payload[:type_casted_binds]).map { |attr, value| render_bind(attr, value) }.inspect
+                      casted_params = type_casted_binds(payload[:binds], payload[:type_casted_binds])
+                      "  " + payload[:binds].zip(casted_params).map { |attr, value| render_bind(attr, value) }.inspect
                     else
                       "  " + payload[:binds].map { |attr| render_bind(attr) }.inspect
                     end

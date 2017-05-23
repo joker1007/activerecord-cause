@@ -46,6 +46,25 @@ describe ActiveRecord::Cause do
       puts output
       expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
+
+    context 'With query cache' do
+      around do |example|
+        ActiveRecord::Base.cache do
+          example.run
+        end
+      end
+
+      it 'Log SQL with location that is cause of load' do
+        auth_user = AuthUser.create!(name: "twitter")
+        User.create!(name: "joker1007", auth_user: auth_user)
+        User.first.auth_user_name
+        User.first.auth_user_name # CACHE
+        output = stringio.tap(&:rewind).read
+        puts output
+        cache_output = output.lines.drop_while { |s| !s.match(/CACHE/) }.join("\n")
+        expect(cache_output).to match(/#{File.expand_path(__FILE__)}/)
+      end
+    end
   end
 
   context "log_mode :all" do
