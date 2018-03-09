@@ -7,4 +7,4 @@ gemfile:
   - gemfiles/activerecord-42.gemfile
   - gemfiles/activerecord-502.gemfile
   - gemfiles/activerecord-503.gemfile
-  - gemfiles/activerecord-51.gemfile
+  - gemfiles/activerecord-514.gemfile
