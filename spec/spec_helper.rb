@@ -1,10 +1,11 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'activerecord/cause'
 
-ActiveRecord::Base.establish_connection(
+ActiveRecord::Base.configurations[:test] = {
   adapter: "sqlite3",
   database: ":memory:"
-)
+}
+ActiveRecord::Base.establish_connection(ActiveRecord::Base.configurations[:test])
 
 class AuthUser < ActiveRecord::Base; end
 
