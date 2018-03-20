@@ -147,13 +147,28 @@ module ActiveRecord
         "  " + payload[:binds].zip(casted_params).map { |attr, value| render_bind(attr, value) }.inspect
       end
     end
+
+    class LogSubscriberAR515 < LogSubscriberAR502
+      def sql(event)
+        super
+      end
+
+      private
+
+      def get_binds(payload)
+        casted_params = type_casted_binds(payload[:type_casted_binds])
+        "  " + payload[:binds].zip(casted_params).map { |attr, value| render_bind(attr, value) }.inspect
+      end
+    end
   end
 end
 
 require "activerecord/cause/railtie" if defined?(Rails)
 
 ActiveSupport.on_load(:active_record) do
-  if ActiveRecord.version >= Gem::Version.new("5.0.3")
+  if ActiveRecord.version >= Gem::Version.new("5.1.5")
+    ActiveRecord::Cause::LogSubscriberAR515.attach_to :active_record
+  elsif ActiveRecord.version >= Gem::Version.new("5.0.3")
     ActiveRecord::Cause::LogSubscriberAR503.attach_to :active_record
   elsif ActiveRecord.version >= Gem::Version.new("5.0.0")
     ActiveRecord::Cause::LogSubscriberAR502.attach_to :active_record
