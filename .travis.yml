@@ -1,11 +1,11 @@
 language: ruby
 sudo: false
 rvm:
+  - 2.5.1
   - 2.4.1
-  - 2.3.3
 gemfile:
-  - gemfiles/activerecord-42.gemfile
   - gemfiles/activerecord-502.gemfile
   - gemfiles/activerecord-503.gemfile
   - gemfiles/activerecord-514.gemfile
   - gemfiles/activerecord-515.gemfile
+  - gemfiles/activerecord-520.gemfile

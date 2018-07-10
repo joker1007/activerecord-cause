@@ -18,6 +18,10 @@ class User < ActiveRecord::Base
 end
 
 ActiveRecord::Migration.verbose = false
-ActiveRecord::Migrator.migrate File.expand_path("../db/migrate", __FILE__), nil
+if ActiveRecord.version >= Gem::Version.new("5.2.0")
+  ActiveRecord::MigrationContext.new(File.expand_path("../db/migrate", __FILE__)).up
+else
+  ActiveRecord::Migrator.migrate File.expand_path("../db/migrate", __FILE__), nil
+end
 
 require 'logger'
