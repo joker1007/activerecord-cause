@@ -16,6 +16,7 @@ describe ActiveRecord::Cause do
       User.all.to_a
       output = stringio.tap(&:rewind).read
       puts output
+      expect(output).not_to match(/ERROR/)
       expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
   end
@@ -29,6 +30,7 @@ describe ActiveRecord::Cause do
       User.all.to_a
       output = stringio.tap(&:rewind).read
       puts output
+      expect(output).not_to match(/ERROR/)
       expect(output).not_to match(/#{File.expand_path(__FILE__)}/)
     end
   end
@@ -44,6 +46,7 @@ describe ActiveRecord::Cause do
       User.first.auth_user_name
       output = stringio.tap(&:rewind).read
       puts output
+      expect(output).not_to match(/ERROR/)
       expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
 
@@ -62,6 +65,7 @@ describe ActiveRecord::Cause do
         output = stringio.tap(&:rewind).read
         puts output
         cache_output = output.lines.drop_while { |s| !s.match(/CACHE/) }.join("\n")
+        expect(output).not_to match(/ERROR/)
         expect(cache_output).to match(/#{File.expand_path(__FILE__)}/)
       end
     end
@@ -80,6 +84,7 @@ describe ActiveRecord::Cause do
       output = stringio.tap(&:rewind).read
       puts output
       expect(output).to match(/rspec-core/)
+      expect(output).not_to match(/ERROR/)
       expect(output).to match(/#{File.expand_path(__FILE__)}/)
     end
   end

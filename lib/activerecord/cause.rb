@@ -166,12 +166,20 @@ end
 require "activerecord/cause/railtie" if defined?(Rails)
 
 ActiveSupport.on_load(:active_record) do
-  if ActiveRecord.version >= Gem::Version.new("5.1.5")
-    ActiveRecord::Cause::LogSubscriberAR515.attach_to :active_record
-  elsif ActiveRecord.version >= Gem::Version.new("5.0.3")
-    ActiveRecord::Cause::LogSubscriberAR503.attach_to :active_record
+  if ActiveRecord.version >= Gem::Version.new("5.1.0")
+    if ActiveRecord.version >= Gem::Version.new("5.1.5")
+      ActiveRecord::Cause::LogSubscriberAR515.attach_to :active_record
+    else
+      ActiveRecord::Cause::LogSubscriberAR503.attach_to :active_record
+    end
   elsif ActiveRecord.version >= Gem::Version.new("5.0.0")
-    ActiveRecord::Cause::LogSubscriberAR502.attach_to :active_record
+    if ActiveRecord.version >= Gem::Version.new("5.0.7")
+      ActiveRecord::Cause::LogSubscriberAR515.attach_to :active_record
+    elsif ActiveRecord.version >= Gem::Version.new("5.0.3")
+      ActiveRecord::Cause::LogSubscriberAR503.attach_to :active_record
+    elsif ActiveRecord.version >= Gem::Version.new("5.0.0")
+      ActiveRecord::Cause::LogSubscriberAR502.attach_to :active_record
+    end
   else
     ActiveRecord::Cause::LogSubscriberAR4.attach_to :active_record
   end
