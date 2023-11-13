@@ -87,7 +87,7 @@ module ActiveRecord
       end
 
       def generate_cause(text, mode_option)
-        color(text. nil, mode_option)
+        color(text, nil, mode_option)
       end
     end
 
