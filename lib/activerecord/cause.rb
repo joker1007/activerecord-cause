@@ -165,7 +165,7 @@ module ActiveRecord
       end
     end
 
-    class LogSubscriberAR712 < LogSubscriberAR515
+    class LogSubscriberAR711 < LogSubscriberAR515
       def sql(event)
         super
       end
@@ -186,8 +186,8 @@ end
 require "activerecord/cause/railtie" if defined?(Rails)
 
 ActiveSupport.on_load(:active_record) do
-  if ActiveRecord.version >= Gem::Version.new("7.1.2")
-    ActiveRecord::Cause::LogSubscriberAR712.attach_to :active_record
+  if ActiveRecord.version >= Gem::Version.new("7.1.1")
+    ActiveRecord::Cause::LogSubscriberAR711.attach_to :active_record
   elsif ActiveRecord.version >= Gem::Version.new("5.1.0")
     if ActiveRecord.version >= Gem::Version.new("5.1.5")
       ActiveRecord::Cause::LogSubscriberAR515.attach_to :active_record
