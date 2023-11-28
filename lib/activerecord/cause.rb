@@ -45,7 +45,7 @@ module ActiveRecord
 
           name = name_with_color(payload[:name])
           sql = sql_with_color(payload[:sql])
-          cause = color(loc.to_s, nil, true)
+          cause = generate_cause(loc.to_s, true)
 
           output =
             if ActiveRecord::Cause.log_with_sql
@@ -84,6 +84,10 @@ module ActiveRecord
 
       def sql_with_color(payload_sql)
         raise NotImplementedError
+      end
+
+      def generate_cause(text, mode_option)
+        color(text, nil, mode_option)
       end
     end
 
@@ -160,13 +164,31 @@ module ActiveRecord
         "  " + payload[:binds].zip(casted_params).map { |attr, value| render_bind(attr, value) }.inspect
       end
     end
+
+    class LogSubscriberAR711 < LogSubscriberAR515
+      def sql(event)
+        super
+      end
+
+      private
+
+      def sql_with_color(sql)
+        color(sql, sql_color(sql), bold: true)
+      end
+
+      def generate_cause(text, mode_option)
+        color(text, nil, bold: mode_option)
+      end
+    end
   end
 end
 
 require "activerecord/cause/railtie" if defined?(Rails)
 
 ActiveSupport.on_load(:active_record) do
-  if ActiveRecord.version >= Gem::Version.new("5.1.0")
+  if ActiveRecord.version >= Gem::Version.new("7.1.1")
+    ActiveRecord::Cause::LogSubscriberAR711.attach_to :active_record
+  elsif ActiveRecord.version >= Gem::Version.new("5.1.0")
     if ActiveRecord.version >= Gem::Version.new("5.1.5")
       ActiveRecord::Cause::LogSubscriberAR515.attach_to :active_record
     else
